@@ -27,8 +27,7 @@ Espera e clica
     Click Element                    ${locator}
 
 Abrir Navegador
-    Open Browser                https://www.google.com  chrome
-    Maximize Browser Window
+    Open Browser                https://www.google.com  chrome  options=add_argument("--start-maximized")
 
 Acessar Site do Forms
     Go To                       https://demoqa.com/automation-practice-form
@@ -36,42 +35,24 @@ Acessar Site do Forms
 
 Preencher Formulário
     Input Text                  ${input_name}           John
-    Sleep                       1s
     Input Text                  ${input_lname}          Doe
-    Sleep                       1s
     Input Text                  ${input_email}          john@gmail.com
-    Sleep                       1s
     Click Element               ${label_gender}
-    Sleep                       1s
     Input Text                  ${input_number}         1234567890
-    Sleep                       1s
     Click Element               ${input_date}
-    Sleep                       1s
     Espera e clica              ${select_month}
-    Sleep                       1s
     Espera e clica              ${option_month}
-    Sleep                       1s
     Espera e clica              ${select_year}
-    Sleep                       1s
     Espera e clica              ${option_year}
     Click Element               ${div_day}
-    Sleep                       2s
     Input Text                  ${input_subject}        English
-    Sleep                       1s
     Press Keys                  ${input_subject}        ENTER
-    Sleep                       1s
     Scroll Element Into View    ${button_submit}
     Espera e clica              ${label_hobbies}
-    Sleep                       1s
     Input Text                  ${textarea_address}     123 Main St
-    Sleep                       1s
-    Sleep                       1s
     Click Element               ${input_state}
-    Sleep                       1s
     Press Keys                  ${input_state}          ENTER
-    Sleep                       1s
     Click Element               ${input_city}
-    Sleep                       1s
     Press Keys                  ${input_city}           ENTER
     Click Element               ${button_submit}
 
