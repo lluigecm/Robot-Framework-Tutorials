@@ -2,7 +2,6 @@
 Library     RPA.PDF
 Library     Collections
 Library     String
-Library    RPA.FTP
 
 *** Variables ***
 ${PDF_PATH}      ${CURDIR}/PDFTESTE.pdf
