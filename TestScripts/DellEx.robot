@@ -5,11 +5,11 @@ Library        RPA.FileSystem
 Library        RPA.Excel.Files
 
 *** Variables ***
-${SITE}                https://www.dell.com/pt-br
+${SITE}                https://www.dell.com/pt-br/shop/notebooks/sc/laptops
 ${LAPTOP_BUTTON}       xpath://li[@data-tier-id='2']
 ${FILTER_LIST}         //*[@id="unified-masthead-navigation"]/nav/ul/li[3]/ul/li[8]/button
 ${FILTER_BUTTON}       //*[@id="unified-masthead-navigation"]/nav/ul/li[3]/ul/li[8]/ul/li[7]/a
-${FILTER_CAPTCHA}      //*[@id="refiner_38011"]/ol/li[1]/label/span
+${FILTER_CAPTCHA}      //*[@id="refiner_37626"]/ol/li[5]/label/span
 @{ID_LIST}             g5530w251116bts    g5530w251124bts    g5530w251122w    g5530w251120w   g5530w25001bts
 ...                    g5530u25001w       g5530u251122w      g5530u251124w    g5530w251122w1  g5530w251120w1
 ...                    g5530w25002w       g5530u25002w
@@ -23,9 +23,10 @@ Abrir Navegador
     Open Browser    ${SITE}    chrome    options=add_argument("--start-maximized")
 
 Filtrar Notebooks
-    Mouse Over                ${LAPTOP_BUTTON}
-    Mouse Over                ${FILTER_LIST}
-    Click Element             ${FILTER_BUTTON}
+    #Mouse Over                ${LAPTOP_BUTTON}
+    #Mouse Over                ${FILTER_LIST}
+    #Click Element             ${FILTER_BUTTON}
+    Scroll Element Into View  ${FILTER_CAPTCHA}
     Click Element             ${FILTER_CAPTCHA}
     Sleep                     2s
 
