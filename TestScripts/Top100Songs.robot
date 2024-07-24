@@ -40,8 +40,11 @@ Data Extraction
     FOR    ${song}    IN RANGE    1    ${qnt_musics}+1
         ${musica}        Get Text        //*[@id="top-songs"]/div/div[2]/a[${song}]/div[2]/h3/div[1]
         ${autor}         Get Text        //*[@id="top-songs"]/div/div[2]/a[${song}]/h4
-        # A estrutura do html muda em músicas aleatórias, então não sei como padronizar o xpath
-        ${acessos}       Get Text        //*[@id="top-songs"]/div/div[2]/a[${song}]/div[3]/div[????]/div/span
+        TRY
+            ${acessos}       Get Text        //*[@id="top-songs"]/div/div[2]/a[${song}]/div[3]/div[2]/div/span
+        EXCEPT
+            ${acessos}       Get Text        //*[@id="top-songs"]/div/div[2]/a[${song}]/div[3]/div/div/span
+        END
         Append To List    ${lista_musica}    ${musica}
         Append To List    ${lista_autor}     ${autor}
         Append To List    ${lista_acessos}   ${acessos}
