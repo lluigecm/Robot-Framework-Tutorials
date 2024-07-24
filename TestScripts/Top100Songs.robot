@@ -13,11 +13,10 @@ ${site}              https://genius.com/
 
 *** Keywords ***
 Open Page
-    Open Browser    ${site}    browser=chrome
-    Maximize Browser Window
+    Open Browser    ${site}    browser=chrome    options=add_argument("--start-maximized")
 
 Open Music's List
-    Set Selenium Timeout    10s
+    Set Selenium Timeout    5s
     WHILE    ${True}
         ${load_more}        Is Element Visible    //*[@id="top-songs"]/div/div[3]/div
         IF    ${load_more} == ${False}
@@ -25,13 +24,12 @@ Open Music's List
                 Wait Until Page Contains Element    //*[@id="top-songs"]/div/div[3]/div
                 Scroll Element Into View            //*[@id="top-songs"]/div/div[3]/div
                 Click Element                       //*[@id="top-songs"]/div/div[3]/div
-                Sleep                               1s    #Delay de debug
             EXCEPT
                 BREAK
             END
         ELSE
             Click Element        //*[@id="top-songs"]/div/div[3]/div
-            Sleep                1s    #Delay de debug
+        Sleep        1s
         END
     END
 
