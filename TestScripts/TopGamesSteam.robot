@@ -1,14 +1,19 @@
 *** Settings ***
 Library        RPA.Browser.Selenium
-Library    Collections
+Library        Collections
+Library        RPA.Excel.Files
+Library        RPA.Email.ImapSmtp
 
 
 *** Variables ***
-${site}        https://store.steampowered.com/
+${site}               https://store.steampowered.com/
 @{name_list}
 @{date_list}
 @{price_list}
 @{link_list}
+${email}              YourEmail
+${password}           YourPassword
+${path_anexos}        YourPath
 
 *** Keywords ***
 Open Page and Filter Games
@@ -37,7 +42,33 @@ Get Top Games
         Append To List    ${link_list}    ${link}
     END
 
+Insert Data in Excel
+    Create Workbook             TopGamesSteam.xlsx
+
+    Set Cell Value    1    1    Nome
+    Set Cell Value    1    2    Data de Lançamento
+    Set Cell Value    1    3    Preço
+    Set Cell Value    1    4    Link
+
+    ${qnt}    Evaluate    len(${name_list})
+    FOR    ${i}    IN RANGE    1    ${qnt}+1
+        ${empty_line}        Find Empty Row
+
+        Set Cell Value    ${empty_line}    1    ${name_list}[${i-1}]
+        Set Cell Value    ${empty_line}    2    ${date_list}[${i-1}]
+        Set Cell Value    ${empty_line}    3    ${price_list}[${i-1}]
+        Set Cell Value    ${empty_line}    4    ${link_list}[${i-1}]
+    END
+
+    Save Workbook           Planilhas/TopGamesSteam.xlsx
+
+Send Data by Email
+    Authorize Smtp    account=${email}    password=${password}    smtp_server=smtp-mail.outlook.com    smtp_port=587
+    Send Message    sender=${email}    recipients=${email}    subject=TESTE STEAM    body=TOP 100 GAMES    attachments=${path_anexos}
+    
 *** Tasks ***
 Open Steam's Top Games
     Open Page and Filter Games
     Get Top Games
+    Insert Data in Excel
+    Send Data by Email
