@@ -60,7 +60,7 @@ Insert Data in Excel
         Set Cell Value    ${empty_line}    4    ${link_list}[${i-1}]
     END
 
-    Save Workbook           Planilhas/TopGamesSteam.xlsx
+    Save Workbook           YourPath/TopGamesSteam.xlsx
 
 Send Data by Email
     Authorize Smtp    account=${email}    password=${password}    smtp_server=smtp-mail.outlook.com    smtp_port=587
