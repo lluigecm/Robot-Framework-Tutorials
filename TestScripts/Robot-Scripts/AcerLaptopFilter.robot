@@ -44,10 +44,10 @@ Extrair Informações
         Append To List    ${LAPTOPS_PRICES}  ${LAP_PRICE}
     END
     FOR  ${i}      IN RANGE    ${QNT_LAPTOPS}
-        Scroll Element Into View             //*[@id="gallery-layout-container"]/div[${i+1}]/section/a
-        ${LAP_LINKS}      Set Variable       //*[@id="gallery-layout-container"]/div[${i+1}]/section/a
-        ${LAP_LINK}       Get Element Attribute    ${LAP_LINKS}    href
-        Append To List    ${LAPTOPS_LINKS}  ${LAP_LINK}
+        Scroll Element Into View                     //*[@id="gallery-layout-container"]/div[${i+1}]/section/a
+        ${LAP_LINKS}      Set Variable               //*[@id="gallery-layout-container"]/div[${i+1}]/section/a
+        ${LAP_LINK}       Get Element Attribute      ${LAP_LINKS}    href
+        Append To List    ${LAPTOPS_LINKS}           ${LAP_LINK}
     END
 
 

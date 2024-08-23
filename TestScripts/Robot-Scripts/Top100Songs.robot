@@ -29,7 +29,7 @@ Open Music's List
             END
         ELSE
             Click Element        //*[@id="top-songs"]/div/div[3]/div
-        Sleep        1s
+        Sleep        1s          #Pausa entre cada iteração
         END
     END
 
