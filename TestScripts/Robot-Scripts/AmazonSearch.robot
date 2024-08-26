@@ -51,8 +51,19 @@ Open Browser and Search
 # Create a keyword to get the product name, price and link, and save them in a list
 # Create a keyword to save the product name, price and link in an Excel file
 # Create a keyword to create a new dir named AmazonResults
+Create Amazon Directory
+    TRY
+        Create Directory    AmazonResults
+    EXCEPT
+        Log    This path already exists and isn't a directory
+    END
 # Create a keyword to move the Excel file to the AmazonResults dir
-
+Move Excel File
+    TRY
+        Move File    AmazonResults.xlsx    AmazonResults
+    EXCEPT
+        Log    Error moving the file
+    END
 
 *** Test Cases ***
 Test
