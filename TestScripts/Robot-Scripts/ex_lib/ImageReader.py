@@ -1,13 +1,13 @@
-from pytesseract import pytesseract
-from PIL import Image
-
+import easyocr
 
 def IMAGE_TO_TEXT(image_path):
-    pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
-    text = pytesseract.image_to_string(Image.open(image_path))
-    return text
+    reader = easyocr.Reader(['en'])
+    result = reader.readtext(image_path)
 
-print(IMAGE_TO_TEXT("./Robot-Scripts/captcha.png"))
+    return result[0][1]
+
+
+print(IMAGE_TO_TEXT('../captcha.png'))
 
 # Testar EasyOCR
 # Testar Keras-OCR
