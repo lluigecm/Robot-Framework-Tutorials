@@ -18,7 +18,7 @@ ${remove_chars}       &nbsp;
 *** Keywords ***
 Verify if adds exists
     [Arguments]        ${element}
-    ${bool} =          Page Should Contain Element    ${element}
+    ${bool} =          Does Page Contain Element    ${element}
     RETURN             ${bool}
 
 Confirm if png already exists
@@ -55,30 +55,52 @@ Open Browser and Search
     Click Button     //*[@id="nav-search-submit-button"]
 
 Get Products Info
-    ${add_exists} =    Verify if adds exists    //div[@class="a-row a-spacing-base"]
+    ${add_exists} =    Verify if adds exists    //*[@class="s-result-item s-widget s-widget-spacing-large AdHolder s-flex-full-width"][@data-index="0"]
     IF    ${add_exists} == ${True}
-        ${cont} =       Evaluate        2
-    ELSE
         ${cont} =       Evaluate        3
+    ELSE
+        ${cont} =       Evaluate        2
     END
 
     FOR    ${i}    IN RANGE    ${cont}      64
-        ${prod_info} =         Get Text                //*[@data-index="${cont}"]//h2
-        ${prod_link} =         Get Element Attribute   //*[@data-index="${cont}"]//a    href
+        ${prod_infos} =         Get Text                //*[@data-index="${cont}"]//h2
+        ${prod_links} =         Get Element Attribute   //*[@data-index="${cont}"]//a    href
 
         TRY
-             ${prod_price} =        Get Text           //*[@data-index="${cont}"]/div/div/span/div/div/div[2]/div[3]/div/div/a/span/span
-             ${prod_price} =        Evaluate           REMOVE CHARS     ${prod_price}   ${remove_chars}
+             ${prod_prices} =        Get Text           //*[@data-index="${cont}"]/div/div/span/div/div/div[2]/div[3]/div/div/a/span/span
+             ${prod_prices} =        REMOVE CHARS       ${prod_prices}    ${remove_chars}
         EXCEPT
-             ${prod_price} =        Evaluate           "Indisponível"
+            TRY
+                ${prod_prices} =        Get Text        //*[@id="search"]/div[1]/div[1]/div/span[1]/div[1]/div[${cont}]/div/div/div/div/span/div/div/div[2]/div[5]/div/div/a/span[1]/span[2]
+                ${prod_prices} =        REMOVE CHARS    ${prod_prices}    ${remove_chars}
+            EXCEPT
+                ${prod_prices} =        Evaluate           "Indisponível"
+            END
         END
 
-        Append To List    ${PROD_INFO}    ${prod_info}
-        Append To List    ${PROD_PRICE}   ${prod_price}
-        Append To List    ${PROD_LINK}    ${prod_link}
+        Append To List    ${PROD_INFO}    ${prod_infos}
+        Append To List    ${PROD_LINK}    ${prod_links}
+        Append To List    ${PROD_PRICE}   ${prod_prices}
     END
 
 # Create a keyword to save the product name, price and link in an Excel file
+Insert Data in Excel File
+    Create Workbook    AmazonResults.xlsx
+
+    Set Cell Value    1    1    Info
+    Set Cell Value    1    2    Preço
+    Set Cell Value    1    3    Link
+
+    ${qnt} =    Evaluate    len(${PROD_INFO})
+    FOR    ${i}    IN RANGE    1    ${qnt}+1
+        ${empty_line} =    Find Empty Row
+
+        Set Cell Value    ${empty_line}    1    ${PROD_INFO}[${i-1}]
+        Set Cell Value    ${empty_line}    2    ${PROD_PRICE}[${i-1}]
+        Set Cell Value    ${empty_line}    3    ${PROD_LINK}[${i-1}]
+    END
+
+    Save Workbook    AmazonResults.xlsx
 
 Create Amazon Directory
     TRY
@@ -98,3 +120,4 @@ Move Excel File
 *** Test Cases ***
 Test
     Open Browser and Search
+    Get Products Info
