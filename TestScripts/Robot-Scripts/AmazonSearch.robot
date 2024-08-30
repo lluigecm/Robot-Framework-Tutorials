@@ -9,7 +9,6 @@ Library           ex_lib/Utils.py
 ${site}               https://www.amazon.com.br/
 ${arq_txt_path}       Arquivos-Teste/prod.txt
 ${captcha_text}
-${remove_chars}       &nbsp;
 @{PROD_INFO}
 @{PROD_PRICE}
 @{PROD_LINK}
@@ -68,11 +67,9 @@ Get Products Info
 
         TRY
              ${prod_prices} =        Get Text           //*[@data-index="${cont}"]/div/div/span/div/div/div[2]/div[3]/div/div/a/span/span
-             ${prod_prices} =        REMOVE CHARS       ${prod_prices}    ${remove_chars}
         EXCEPT
             TRY
                 ${prod_prices} =        Get Text        //*[@id="search"]/div[1]/div[1]/div/span[1]/div[1]/div[${cont}]/div/div/div/div/span/div/div/div[2]/div[5]/div/div/a/span[1]/span[2]
-                ${prod_prices} =        REMOVE CHARS    ${prod_prices}    ${remove_chars}
             EXCEPT
                 ${prod_prices} =        Evaluate           "Indisponível"
             END
