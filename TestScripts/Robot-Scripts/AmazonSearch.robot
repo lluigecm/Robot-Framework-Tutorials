@@ -8,10 +8,9 @@ Library           ex_lib/Utils.py
 *** Variables ***
 ${site}               https://www.amazon.com.br/
 ${arq_txt_path}       Arquivos-Teste/prod.txt
-${captcha_text}
-@{PROD_INFO}
-@{PROD_PRICE}
-@{PROD_LINK}
+@{PRODS_INFO}
+@{PRODS_PRICE}
+@{PRODS_LINK}
 
 
 *** Keywords ***
@@ -54,30 +53,17 @@ Open Browser and Search
     Click Button     //*[@id="nav-search-submit-button"]
 
 Get Products Info
-    ${add_exists} =    Verify if adds exists    //*[@class="s-result-item s-widget s-widget-spacing-large AdHolder s-flex-full-width"][@data-index="0"]
-    IF    ${add_exists} == ${True}
-        ${cont} =       Evaluate        3
-    ELSE
-        ${cont} =       Evaluate        2
-    END
+    ${qnt_prods} =    Get Element Count    //div[@data-component-type="s-search-result"]
 
-    FOR    ${i}    IN RANGE    ${cont}      64
-        ${prod_infos} =         Get Text                //*[@data-index="${cont}"]//h2
-        ${prod_links} =         Get Element Attribute   //*[@data-index="${cont}"]//a    href
+    FOR    ${i}    IN RANGE    1    ${qnt_prods}+1
+        ${prod_name} =         Get Text                         //div[@data-component-type="s-search-result"][${i}]//h2[@class="a-size-mini a-spacing-none a-color-base s-line-clamp-4"]
+        ${prod_price} =        Get Text                         //div[@data-component-type="s-search-result"][${i}]/div/div/div/div/span/div/div/div[2]/div[4]/div/div/a/span/span
+        ${prod_prices} =       REMOVE CHARS    ${prod_price}    &nbsp
+        ${prod_link} =         Get Element Attribute            //div[@data-component-type="s-search-result"][${i}]/div/div/div/div/span/div/div/div[2]/div[4]/div/div/a    href
 
-        TRY
-             ${prod_prices} =        Get Text           //*[@data-index="${cont}"]/div/div/span/div/div/div[2]/div[3]/div/div/a/span/span
-        EXCEPT
-            TRY
-                ${prod_prices} =        Get Text        //*[@id="search"]/div[1]/div[1]/div/span[1]/div[1]/div[${cont}]/div/div/div/div/span/div/div/div[2]/div[5]/div/div/a/span[1]/span[2]
-            EXCEPT
-                ${prod_prices} =        Evaluate           "Indisponível"
-            END
-        END
-
-        Append To List    ${PROD_INFO}    ${prod_infos}
-        Append To List    ${PROD_LINK}    ${prod_links}
-        Append To List    ${PROD_PRICE}   ${prod_prices}
+        Append To List    ${PRODS_INFO}    ${prod_name}
+        Append To List    ${PRODS_PRICE}    ${prod_prices}
+        Append To List    ${PRODS_LINK}    ${prod_link}
     END
 
 # Create a keyword to save the product name, price and link in an Excel file
@@ -88,13 +74,13 @@ Insert Data in Excel File
     Set Cell Value    1    2    Preço
     Set Cell Value    1    3    Link
 
-    ${qnt} =    Evaluate    len(${PROD_INFO})
+    ${qnt} =    Evaluate    len(${PRODS_INFO})
     FOR    ${i}    IN RANGE    1    ${qnt}+1
         ${empty_line} =    Find Empty Row
 
-        Set Cell Value    ${empty_line}    1    ${PROD_INFO}[${i-1}]
-        Set Cell Value    ${empty_line}    2    ${PROD_PRICE}[${i-1}]
-        Set Cell Value    ${empty_line}    3    ${PROD_LINK}[${i-1}]
+        Set Cell Value    ${empty_line}    1    ${PRODS_INFO}[${i-1}]
+        Set Cell Value    ${empty_line}    2    ${PRODS_PRICE}[${i-1}]
+        Set Cell Value    ${empty_line}    3    ${PRODS_LINK}[${i-1}]
     END
 
     Save Workbook    AmazonResults.xlsx
