@@ -29,46 +29,61 @@ Get Info From Archive
     ${content} =       Get File        ${arq_txt_path}
     Log                ${content}
     RETURN             ${content}
-    
-Open Browser and Search
-    Open Browser    ${site}    chrome    options=add_argument("--start-maximized")
 
+Avoid Captcha If Exists
     ${elemento_captcha}    Is Element Visible    //div[@class="a-row a-spacing-large"]
+    Sleep                  1s
     IF    ${elemento_captcha} == ${True}
         ## Caso esteja presente, o robô espera o elemento da imagem carregar e faz o download
-        
+
         Wait Until Element Is Visible    //div[@class="a-row a-text-center"]
-        ${file_exists}         Confirm if png already exists    TestScripts\Robot-Scripts\captcha.png
+        ${file_exists}         Confirm if png already exists    TestScripts\Robot-Scripts\captcha.png           # Não Finalizado devido ao captcha não aparecer
         IF    ${file_exists} == ${True}
             Remove File    TestScripts\Robot-Scripts\captcha.png
         END
 
         Capture Element Screenshot       //div[@class="a-row a-text-center"]    captcha.png
-        ${captcha_text} =                IMAGE TO TEXT                          captcha.png
-        Log                              ${captcha_text}
+        TRY
+            Move File    ./captcha.png    ./Robot-Scripts/captcha.png
+        EXCEPT
+            Pass Execution   O arquivo já foi movido
+        END
+        ${captcha_text} =                IMAGE TO TEXT                          ./Robot-Scripts/captcha.png
+
+        Input Text                       //*[@id="captchacharacters"]    ${captcha_text}
+        Sleep                            1s
+        Click Button                     //button[@type="submit"]
     END
     
-    ${prod} =        Get Info From Archive                ${arq_txt_path}
-    Input Text       //*[@id="twotabsearchtextbox"]       ${prod}
-    Click Button     //*[@id="nav-search-submit-button"]
+Open Browser Maximized
+    Open Browser    ${site}    chrome    options=add_argument("--start-maximized")
+
+Search Product
+    ${prod} =                        Get Info From Archive                ${arq_txt_path}
+    Wait Until Element Is Visible    //*[@id="twotabsearchtextbox"]
+    Input Text                       //*[@id="twotabsearchtextbox"]       ${prod}
+    Click Button                     //*[@id="nav-search-submit-button"]
 
 Get Products Info
+    Wait Until Element Is Visible          //div[@data-component-type="s-search-result"]
     ${qnt_prods} =    Get Element Count    //div[@data-component-type="s-search-result"]
 
     FOR    ${i}    IN RANGE    1    ${qnt_prods}+1
-        ${prod_name} =         Get Text                         //div[@data-component-type="s-search-result"][${i}]//h2[@class="a-size-mini a-spacing-none a-color-base s-line-clamp-4"]
-        ${prod_price} =        Get Text                         //div[@data-component-type="s-search-result"][${i}]/div/div/div/div/span/div/div/div[2]/div[4]/div/div/a/span/span
-        ${prod_prices} =       REMOVE CHARS    ${prod_price}    &nbsp
-        ${prod_link} =         Get Element Attribute            //div[@data-component-type="s-search-result"][${i}]/div/div/div/div/span/div/div/div[2]/div[4]/div/div/a    href
+        ${prod_name} =             Get Text                     //div[@data-component-type="s-search-result"][${i}]//h2[@class="a-size-mini a-spacing-none a-color-base s-line-clamp-4"]
+        TRY
+            ${prod_price} =        Get Text                     //div[@data-component-type="s-search-result"][${i}]//span[@class="a-price"]//span[@aria-hidden="true"]
+        EXCEPT
+            ${prod_price} =        Evaluate                     "Preço não disponível"
+        END
+        ${prod_link} =         Get Element Attribute            //div[@data-component-type="s-search-result"][${i}]//h2[@class="a-size-mini a-spacing-none a-color-base s-line-clamp-4"]/a    href
 
         Append To List    ${PRODS_INFO}    ${prod_name}
-        Append To List    ${PRODS_PRICE}    ${prod_prices}
+        Append To List    ${PRODS_PRICE}   ${prod_price}
         Append To List    ${PRODS_LINK}    ${prod_link}
     END
 
-# Create a keyword to save the product name, price and link in an Excel file
 Insert Data in Excel File
-    Create Workbook    AmazonResults.xlsx
+    Create Workbook    AmazonSearch.xlsx
 
     Set Cell Value    1    1    Info
     Set Cell Value    1    2    Preço
@@ -83,7 +98,7 @@ Insert Data in Excel File
         Set Cell Value    ${empty_line}    3    ${PRODS_LINK}[${i-1}]
     END
 
-    Save Workbook    AmazonResults.xlsx
+    Save Workbook    AmazonSearch.xlsx
 
 Create Amazon Directory
     TRY
@@ -94,7 +109,7 @@ Create Amazon Directory
 
 Move Excel File
     TRY
-        Move File    Robot-Scripts/AmazonResults.xlsx    ./AmazonResults/AmazonResults.xlsx
+        Move File   AmazonSearch.xlsx    AmazonResults/AmazonSearch.xlsx
     EXCEPT
         Log    Error moving the file
     END
@@ -102,5 +117,10 @@ Move Excel File
 
 *** Test Cases ***
 Test
-    Open Browser and Search
+    Open Browser Maximized
+    Avoid Captcha If Exists
+    Search Product
     Get Products Info
+    Insert Data in Excel File
+    Create Amazon Directory
+    Move Excel File

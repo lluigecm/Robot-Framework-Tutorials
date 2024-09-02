@@ -10,3 +10,5 @@ def REMOVE_CHARS(string, chars_to_remove):
     translation_table = str.maketrans('', '', chars_to_remove)
 
     return string.translate(translation_table)
+
+#print(IMAGE_TO_TEXT('../captcha.png'))
