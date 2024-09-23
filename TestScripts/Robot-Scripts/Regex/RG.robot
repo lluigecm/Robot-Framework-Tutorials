@@ -47,7 +47,6 @@ Abrir Arquivo e Separar Informações
     ${n_doc}=             Formatar Informação   ${n_doc}[0]            .+[:]
 
 
-
 *** Tasks ***
 TRY
     Abrir Arquivo e Separar Informações
