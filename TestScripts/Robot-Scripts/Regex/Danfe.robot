@@ -6,7 +6,7 @@ Library           String
 ${arq_path}                        ../Arquivos-Teste/danfe.txt
 ${data_recebimento_rgx}            RECEBIMENTO\\n\\d{2}\\/\\d{2}\\/\\d{4}
 ${data_danfe_rgx}                  DANFE\\n\\d{2}\\/\\d{2}\\/\\d{4}
-${entrega_&_termolabil_rgx}        [(]\\sX\\s[)].+
+${entrega_&_termolabil_rgx}        [(]\\sX\\s[)]\\s\\w{3}
 ${afm_rgx}                         AFM.+
 ${n_danfe_rgx}                     DANFE:\\s\\d+
 ${prog_vinc_rgx}                   VINCULADO:.+
